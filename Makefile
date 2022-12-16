@@ -23,42 +23,50 @@ ${SINGULARITY_DEB}:
 ${SINGULARITY_RPM}:
 	wget https://github.com/sylabs/singularity/releases/download/v3.10.2/${SINGULARITY_RPM}
 
-resources: ${ETCD} ${NHC} ${SINGULARITY_DEB} ${SINGULARITY_RPM} ## Download all resources
+centos-resources: ${ETCD} ${NHC} ${SINGULARITY_RPM} ## Download centos resources
+ubuntu-resources: ${ETCD} ${NHC} ${SINGULARITY_DEB} ## Download ubuntu resources
 
 .PHONY: lxd-focal
-lxd-focal: resources ## Deploy slurm-core in a local LXD Ubuntu Focal cluster
+lxd-focal: ubuntu-resources ## Deploy slurm-core in a local LXD Ubuntu Focal cluster
 	juju deploy ./slurm-core/bundle.yaml \
 	            --overlay ./slurm-core/clouds/lxd.yaml \
 	            --overlay ./slurm-core/series/focal.yaml \
-	            --overlay ./slurm-core/charms/local-development.yaml
+	            --overlay ./slurm-core/charms/local-development-ubuntu.yaml
 
 .PHONY: lxd-jammy
-lxd-jammy: resources ## Deploy slurm-core in a local LXD CentOS7 cluster
+lxd-jammy: ubuntu-resources ## Deploy slurm-core in a local LXD CentOS7 cluster
 	juju deploy ./slurm-core/bundle.yaml \
 	            --overlay ./slurm-core/clouds/lxd.yaml \
 	            --overlay ./slurm-core/series/jammy.yaml \
-	            --overlay ./slurm-core/charms/local-development.yaml
+	            --overlay ./slurm-core/charms/local-development-ubuntu.yaml
 
 .PHONY: lxd-centos
-lxd-centos: resources ## Deploy slurm-core in a local LXD CentOS7 cluster
+lxd-centos: centos-resources ## Deploy slurm-core in a local LXD CentOS7 cluster
 	juju deploy ./slurm-core/bundle.yaml \
 	            --overlay ./slurm-core/clouds/lxd.yaml \
 	            --overlay ./slurm-core/series/centos7.yaml \
-	            --overlay ./slurm-core/charms/local-development.yaml
+	            --overlay ./slurm-core/charms/local-development-centos.yaml
 
 .PHONY: aws-focal
-aws-focal: resources ## Deploy slurm-core in a AWS Ubuntu Focal cluster
+aws-focal: ubuntu-resources ## Deploy slurm-core in a AWS Ubuntu Focal cluster
 	juju deploy ./slurm-core/bundle.yaml \
 	            --overlay ./slurm-core/clouds/aws.yaml \
 	            --overlay ./slurm-core/series/focal.yaml \
-	            --overlay ./slurm-core/charms/local-development.yaml
+	            --overlay ./slurm-core/charms/local-development-ubuntu.yaml
+
+.PHONY: aws-jammy
+aws-jammy: ubuntu-resources ## Deploy slurm-core in a AWS Ubuntu Focal cluster
+	juju deploy ./slurm-core/bundle.yaml \
+	            --overlay ./slurm-core/clouds/aws.yaml \
+	            --overlay ./slurm-core/series/jammy.yaml \
+	            --overlay ./slurm-core/charms/local-development-ubuntu.yaml
 
 .PHONY: aws-centos
-aws-centos: resources ## Deploy slurm-core in a AWS CentOS7 cluster
+aws-centos: centos-resources ## Deploy slurm-core in a AWS CentOS7 cluster
 	juju deploy ./slurm-core/bundle.yaml \
 	            --overlay ./slurm-core/clouds/aws.yaml \
 	            --overlay ./slurm-core/series/centos7.yaml \
-	            --overlay ./slurm-core/charms/local-development.yaml
+	            --overlay ./slurm-core/charms/local-development-centos.yaml
 
 .PHONY: help
 help:
